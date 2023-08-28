@@ -33,14 +33,14 @@ for line in data:
 
 session.commit()
 
-publ_name = input('Введите имя писателя или id: ')
-if publ_name.isnumeric():
-    for c in session.query(Publisher).filter(
-            Publisher.id == int(publ_name)).all():
-        print(c)
+writer = input('Введите имя писателя или id: ')
+query = session.query(Book.title, Shop.name, Sale.price, Sale.date_sale).join(Publisher).join(Stock).join(Shop).join(Sale)
+if writer.isdigit():
+    query = query.filter(Publisher.id == writer).all()
 else:
-    for c in session.query(Publisher).filter(
-            Publisher.name.like(f'%{publ_name}%')).all():
-        print(c)
+    query = query.filter(Publisher.name == writer).all()
+
+for title, name, price, date_sale in query:
+    print(f"{title:<40} | {name:<10} | {price:<8} | {date_sale}")
 
 session.close()
